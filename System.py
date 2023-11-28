@@ -1,4 +1,4 @@
-from SEproject.MedicalDatabase import MedicalDatabase
+from MedicalDatabase import MedicalDatabase
 
 
 class System:
