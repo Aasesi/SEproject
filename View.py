@@ -1,4 +1,4 @@
-from Frames import LoginView, RegisterView, MainView
+from Frames import *
 from tkinter import messagebox
 
 
@@ -6,6 +6,7 @@ class View:
     def __init__(self):
         self.current_frame = None
         self.controller = None
+        self.temp_data = []
 
     def switch(self, name):
         if self.current_frame is not None:
@@ -22,6 +23,13 @@ class View:
             self.current_frame = MainView(self.controller)
             self.current_frame.pack_propagate(False)
             self.current_frame.place(relx=.5, rely=.3, anchor="center")
+        if name == "DoctorViewMain":
+            self.current_frame = DoctorMenuView(self.controller, self.temp_data[0], self.temp_data[1])
+            self.current_frame.pack_propagate(False)
+            self.current_frame.place(relx=.5, rely=.3, anchor="center")
+
+    def give_temp_data(self, temp_list):
+        self.temp_data = temp_list
 
     def set_controller(self, controller):
         self.controller = controller

@@ -1,5 +1,5 @@
 import csv
-
+import sqlite3
 
 class MedicalDatabase:
     def __init__(self, file_path: str):
@@ -56,3 +56,32 @@ class MedicalDatabase:
     def save_data(self):
         # Saves data to file. Something should be in parameters
         pass
+
+
+class MedicalDatabaseSQL:
+    def __init__(self, db_name='your_database.db'):
+        self.db_name = db_name
+        self.conn = None
+        self.cursor = None
+
+    def connect(self):
+        self.conn = sqlite3.connect(self.db_name)
+        self.cursor = self.conn.cursor()
+
+    def commit_and_close(self):
+        self.conn.commit()
+        self.conn.close()
+
+    def create_table(self):
+        if not self.conn:
+            self.connect()
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS user_info (
+                id INTEGER PRIMARY KEY,
+                user_id INTEGER UNIQUE,
+                full_name TEXT,
+                email TEXT,
+                FOREIGN KEY (user_id) REFERENCES logins (id)
+            )
+        ''')
+

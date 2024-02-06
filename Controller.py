@@ -11,10 +11,16 @@ class Controller:
         self.view.switch("Login")
 
     def login(self):
-        user = user = self.view.get_current_frame().username_entry.get()
+        user = self.view.get_current_frame().username_entry.get()
         password = self.view.get_current_frame().password_entry.get()
         if self.model.login(user, password):
-            self.view.switch("MainView")
+            if self.model.current_user.userType == "Doctor":
+                temp_data = [self.model.current_user.name, self.model.current_user.surname]
+                self.view.give_temp_data(temp_data)
+                self.view.switch("DoctorViewMain")
+            else:
+                self.view.switch("MainView")
+
         else:
             self.view.show_message_box()
 
@@ -26,5 +32,10 @@ class Controller:
         password = self.view.get_current_frame().password_entry.get()
         name = self.view.get_current_frame().name_entry.get()
         surname = self.view.get_current_frame().surname_entry.get()
-        user_type = self.view.get_current_frame().user_type_entry.get()
+        user_type = "Patient"
+        if self.view.get_current_frame().selected.get() == 1:
+            user_type = "Doctor"
         self.model.register(name, surname, user_type, user, password)
+
+    def data_analysis_button(self):
+        self.view.switch("MainView")
