@@ -80,3 +80,27 @@ class DoctorMenuView(tk.Frame):
         self.data_analysis_button.grid(row=1, column=0, padx=10, pady=5)
         self.patients_button.grid(row=2, column=0, padx=10, pady=5)
         self.logout_button.grid(row=3, column=0, padx=10, pady=5)
+
+
+class PatientView(tk.Frame):
+    def __init__(self, controller):
+        super().__init__()
+        self.controller = controller
+        self.name_label = tk.Label(self, text="Name:")
+        self.name_label.grid(row=0, column=0, padx=10, pady=5)
+
+
+class DataAnalysisView(tk.Frame):
+    def __init__(self, controller):
+        super().__init__()
+        self.controller = controller
+        self.name_label = tk.Label(self, text="Name:")
+        self.name_label.grid(row=0, column=0, padx=10, pady=5)
+
+
+class PatientDataManipulation(tk.Frame):
+    def __init__(self, controller):
+        super().__init__()
+        self.controller = controller
+        self.name_label = tk.Label(self, text="Name:")
+        self.name_label.grid(row=0, column=0, padx=10, pady=5)

@@ -19,7 +19,7 @@ class Controller:
                 self.view.give_temp_data(temp_data)
                 self.view.switch("DoctorViewMain")
             else:
-                self.view.switch("MainView")
+                self.view.switch("PatientView")
 
         else:
             self.view.show_message_box()
@@ -38,4 +38,7 @@ class Controller:
         self.model.register(name, surname, user_type, user, password)
 
     def data_analysis_button(self):
-        self.view.switch("MainView")
+        self.view.switch("DataAnalysisView")
+
+    def patient_data_manipulation(self):
+        self.view.switch("PatientDataManipulation")
