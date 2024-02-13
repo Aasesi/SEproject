@@ -42,3 +42,6 @@ class Controller:
 
     def patient_data_manipulation(self):
         self.view.switch("PatientDataManipulation")
+
+    def patients_data_button(self):
+        self.view.switch("PatientDataView")

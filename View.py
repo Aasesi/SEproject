@@ -39,6 +39,10 @@ class View:
             self.current_frame = PatientDataManipulation(self.controller)
             self.current_frame.pack_propagate(False)
             self.current_frame.place(relx=.5, rely=.3, anchor="center")
+        if name == "PatientDataView":
+            self.current_frame = PatientDataView(self.controller)
+            self.current_frame.pack_propagate(False)
+            self.current_frame.place(relx=.5, rely=.3, anchor="center")
 
     def give_temp_data(self, temp_list):
         self.temp_data = temp_list
