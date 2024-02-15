@@ -5,7 +5,7 @@ from User import User
 
 class System:
     def __init__(self):
-        self.patient_database = MedicalDatabase("Nofileyet")
+        self.patient_database = MedicalDatabase("csvFiles/patients_data")
         self.current_user = None
         self.user_database = UserDatabaseSQL()
         self.user_database.create_table()
@@ -26,8 +26,12 @@ class System:
     def delete_user(self):
         pass
 
-    def get_statistical_results(self):
-        pass
+    def get_database_data(self):
+        if self.patient_database.load_data():
+            csv_data = [self.patient_database.get_column_names(), self.patient_database.get_rows()]
+            return csv_data
+        else:
+            return []
 
     def access_database(self):
         pass

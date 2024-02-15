@@ -109,58 +109,36 @@ class PatientDataManipulation(tk.Frame):
         self.controller = controller
         self.name_label = tk.Label(self, text="Name:")
         self.name_label.grid(row=0, column=0, padx=10, pady=5)
-        
+
 
 class PatientDataView(tk.Frame):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
-        self.csv_file = 'csvFiles\\heart_disease_health_indicators_BRFSS2015.csv'
-
-        # Create a Treeview
         self.tree = ttk.Treeview(self)
-        self.tree.grid(row=1, column=0, padx=10, pady=5)
+        self.tree.grid(row=0, column=0, sticky='nsew')
 
-        # Add columns to the Treeview
-        self.tree["columns"] = ("#0", *self.get_column_names())
-        self.columns = self.tree["columns"]
+        self.vsb = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscrollcommand=self.vsb.set)
+        self.vsb.grid(row=0, column=1, sticky='ns')
 
-        # Column headings
-        self.tree.heading("#0", text="Index")
-        for i, col in enumerate(self.get_column_names(), start=1):
-            self.tree.heading(f"#{i}", text=col)
+        hsb = ttk.Scrollbar(self, orient="horizontal", command=self.tree.xview)
+        self.tree.configure(xscrollcommand=hsb.set)
+        hsb.grid(row=1, column=0, sticky='ew')
 
-        for col in self.columns:
-            self.tree.column(col, width=50)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
 
-        # Display the first 100 records
-        self.display_records()
+    def load_columns_to_tree(self, columns):
+        self.tree["columns"] = columns
+        self.tree.column('#0', width=0, stretch=False)
+        self.tree.heading('#0', text='', anchor="center")
+        for col in columns:
+            self.tree.column(col, anchor="center", width=50)
+            self.tree.heading(col, text=col)
 
-        # Vertical scrollbar
-        self.v_scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
-        self.v_scrollbar.grid(row=1, column=1, sticky="E")
-        self.tree.configure(yscrollcommand=self.v_scrollbar.set)
-
-        # Horizontal scrollbar
-        self.h_scrollbar = ttk.Scrollbar(self, orient="horizontal", command=self.tree.xview)
-        self.h_scrollbar.grid(row=2, column=0, sticky="S")
-        self.tree.configure(xscrollcommand=self.h_scrollbar.set)
-
-    def get_column_names(self):
-        try:
-            df = pd.read_csv(self.csv_file)
-            return df.columns.tolist()
-        except FileNotFoundError:
-            messagebox.showerror("Error", "CSV file not found.")
-            return []
-
-    def display_records(self):
-        try:
-            df = pd.read_csv(self.csv_file)
-
-            # Display first 100 records
-            for index, row in df.head(100).iterrows():
-                self.tree.insert("", "end", text=index, values=row.tolist())
-
-        except FileNotFoundError:
-            messagebox.showerror("Error", "CSV file not found.")
+    def load_rows_to_tree(self, rows):
+        columns = list(rows[0].keys())
+        for item in rows:
+            values = [item[column] for column in columns]
+            self.tree.insert("", "end", values=values)

@@ -45,3 +45,6 @@ class Controller:
 
     def patients_data_button(self):
         self.view.switch("PatientDataView")
+        data = self.model.get_database_data()
+        self.view.get_current_frame().load_columns_to_tree(data[0])
+        self.view.get_current_frame().load_rows_to_tree(data[1])
