@@ -28,9 +28,8 @@ class MedicalDatabase:
     def load_data(self):
         try:
             df = pd.read_csv(self.file_path)
-            for index, row in df.head(100).iterrows():
-                self.column_names_list = df.columns.tolist()
-                self.rows = df.to_dict("records")
+            self.column_names_list = df.columns.tolist()
+            self.rows = df.to_dict(orient="records")
             return True
         except FileNotFoundError:
             return False
