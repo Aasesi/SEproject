@@ -48,3 +48,6 @@ class Controller:
         data = self.model.get_database_data()
         self.view.get_current_frame().load_columns_to_tree(data[0])
         self.view.get_current_frame().load_rows_to_tree(data[1])
+        
+    def back_to_doctor_view(self):
+        self.view.switch("DoctorViewMain")

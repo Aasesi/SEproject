@@ -101,6 +101,8 @@ class DataAnalysisView(tk.Frame):
         self.controller = controller
         self.name_label = tk.Label(self, text="Name:")
         self.name_label.grid(row=0, column=0, padx=10, pady=5)
+        self.back_button = tk.Button(self, text="Back", command=self.controller.back_to_doctor_view)
+        self.back_button.grid(row=6, column=0, columnspan=2, padx=10, pady=5)
 
 
 class PatientDataManipulation(tk.Frame):
@@ -118,16 +120,34 @@ class PatientDataView(tk.Frame):
         self.tree = ttk.Treeview(self)
         self.tree.grid(row=0, column=0, sticky='nsew')
 
+        # Vertical scrollbar
         self.vsb = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=self.vsb.set)
         self.vsb.grid(row=0, column=1, sticky='ns')
 
+        # Horizontal scrollbar (To be removed (probably))
         hsb = ttk.Scrollbar(self, orient="horizontal", command=self.tree.xview)
         self.tree.configure(xscrollcommand=hsb.set)
         hsb.grid(row=1, column=0, sticky='ew')
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+        
+        # Search input field
+        self.search_field = tk.Entry(self)
+        self.search_field.grid(row=2, column=0, padx=10, pady=5)
+
+        # Search button
+        self.search_button = tk.Button(self, text="Search", command=self.search_data)
+        self.search_button.grid(row=3, column=0, padx=10, pady=5)
+        
+        # Clear filter button
+        self.clear_filter_button = tk.Button(self, text="Clear filter", command=self.controller.patients_data_button)
+        self.clear_filter_button.grid(row=4, column=0, padx=10, pady=5)
+        
+        # Back button
+        self.back_button = tk.Button(self, text="Back", command=self.controller.back_to_doctor_view)
+        self.back_button.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
 
     def load_columns_to_tree(self, columns):
         self.tree["columns"] = columns
@@ -142,3 +162,11 @@ class PatientDataView(tk.Frame):
         for item in rows:
             values = [item[column] for column in columns]
             self.tree.insert("", "end", values=values)
+    
+    def search_data(self):
+        search_text = self.search_field.get().strip()
+    
+        for item in self.tree.get_children():
+            first_column_value = self.tree.item(item)['values'][0]
+            if str(first_column_value) != search_text:
+                self.tree.delete(item)
