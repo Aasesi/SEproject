@@ -119,6 +119,8 @@ class PatientDataView(tk.Frame):
         self.controller = controller
         self.tree = ttk.Treeview(self)
         self.tree.grid(row=0, column=0, sticky='nsew')
+        
+        self.removed_items = []
 
         # Vertical scrollbar
         self.vsb = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
@@ -134,20 +136,27 @@ class PatientDataView(tk.Frame):
         self.grid_columnconfigure(0, weight=1)
         
         # Search input field
+        self.search_label = tk.Label(self, text="Search by patient code:")
+        self.search_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
         self.search_field = tk.Entry(self)
-        self.search_field.grid(row=2, column=0, padx=10, pady=5)
+        self.search_field.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
         # Search button
         self.search_button = tk.Button(self, text="Search", command=self.search_data)
-        self.search_button.grid(row=3, column=0, padx=10, pady=5)
+        self.search_button.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        
+        # Filter by high blood pressure
+        self.high_bp_var = tk.IntVar()
+        self.high_bp_checkbox = tk.Checkbutton(self, text="High BP", variable=self.high_bp_var, onvalue=1, offvalue=0, command=self.filter_high_bp)
+        self.high_bp_checkbox.grid(row=5, column=0, padx=10, pady=5, sticky="w")
         
         # Clear filter button
-        self.clear_filter_button = tk.Button(self, text="Clear filter", command=self.controller.patients_data_button)
-        self.clear_filter_button.grid(row=4, column=0, padx=10, pady=5)
+        self.clear_filter_button = tk.Button(self, text="Clear filters", command=self.controller.patients_data_button)
+        self.clear_filter_button.grid(row=4, column=0, padx=10, pady=5, sticky="e")
         
         # Back button
         self.back_button = tk.Button(self, text="Back", command=self.controller.back_to_doctor_view)
-        self.back_button.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
+        self.back_button.grid(row=6, column=0, padx=10, pady=5, sticky="se")
 
     def load_columns_to_tree(self, columns):
         self.tree["columns"] = columns
@@ -170,3 +179,43 @@ class PatientDataView(tk.Frame):
             first_column_value = self.tree.item(item)['values'][0]
             if str(first_column_value) != search_text:
                 self.tree.delete(item)
+                
+    def filter_high_bp(self):
+        if self.high_bp_var.get() == 1:
+            self.removed_items.clear()
+            for item in self.tree.get_children():
+                high_bp = self.tree.item(item)['values'][2]
+                if str(high_bp) == '0.0':
+                    values = self.tree.item(item)['values']
+                    self.removed_items.append((item, values))
+                    self.tree.delete(item)
+        else:
+            for item, values in self.removed_items:
+                self.tree.insert("", "end", values=values)
+            self.removed_items.clear()
+
+# REFERENCES
+
+# 0 - PatientCode : A unique code assigned to each patient.
+# 1 - HeartDiseaseorAttack : Indicates if the person has a history of heart disease or heart attack.
+# 2 - HighBP : Indicates if the person has been told by a health professional that they have High Blood Pressure.
+# 3 - HighChol : Indicates if the person has been told by a health professional that they have High Blood Cholesterol.
+# 4 - CholCheck : Cholesterol Check, if the person has their cholesterol levels checked within the last 5 years.
+# 5 - BMI : Body Mass Index, calculated by dividing the persons weight (in kilogram) by the square of their height (in meters).
+# 6 - Smoker : Indicates if the person has smoked at least 100 cigarettes.
+# 7 - Stroke : Indicates if the person has a history of stroke.
+# 8 - Diabetes : Indicates if the person has a history of diabetes, or currently in pre-diabetes, or suffers from either type of diabetes.
+# 9 - PhysActivity : Indicates if the person has some form of physical activity in their day-to-day routine.
+# 10 - Fruits : Indicates if the person consumes 1 or more fruit(s) daily.
+# 11 - Veggies : Indicates if the person consumes 1 or more vegetable(s) daily.
+# 12 - HvyAlcoholConsump : Indicates if the person has more than 14 drinks per week.
+# 13 - AnyHealthcare : Indicates if the person has any form of health insurance.
+# 14 - NoDocbcCost : Indicates if the person wanted to visit a doctor within the past 1 year but couldn’t, due to cost.
+# 15 - GenHlth : Indicates the persons response to how well is their general health, ranging from 1 (excellent) to 5 (poor).
+# 16 - Menthlth : Indicates the number of days, within the past 30 days that the person had bad mental health.
+# 17 - PhysHlth : Indicates the number of days, within the past 30 days that the person had bad physical health.
+# 18 - DiffWalk : Indicates if the person has difficulty while walking or climbing stairs.
+# 19 - Sex : Indicates the gender of the person, where 0 is female and 1 is male.
+# 20 - Age : Indicates the age class of the person, where 1 is 18 years to 24 years up till 13 which is 80 years or older, each interval between has a 5-year increment.
+# 21 - Education : Indicates the highest year of school completed, with 0 being never attended or kindergarten only and 6 being, having attended 4 years of college or more.
+# 22 - Income : Indicates the total household income, ranging from 1 (at least $10,000) to 6 ($75,000+)
