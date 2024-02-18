@@ -6,6 +6,6 @@ from DataAnalysis import DataAnalysis
 
 if __name__ == '__main__':
     #a = DataAnalysis()
-    #a.health_event_prediction()
+    #a.train_model_heart_disease()
     app = App()
     app.mainloop()

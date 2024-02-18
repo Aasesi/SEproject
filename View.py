@@ -51,3 +51,6 @@ class View:
 
     def show_message_box(self):
         messagebox.showinfo("some info", "hello")
+
+    def show_message(self):
+        messagebox.showinfo("Incorrect", "Patient not selected in data!!!")

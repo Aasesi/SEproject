@@ -39,9 +39,25 @@ class Controller:
 
     def data_analysis_button(self):
         self.view.switch("DataAnalysisView")
+        data = self.model.get_user_database()
+        self.view.get_current_frame().load_columns_to_tree(data[0])
+        self.view.get_current_frame().load_rows_to_tree(data[1])
 
     def patient_data_manipulation(self):
         self.view.switch("PatientDataManipulation")
+
+    def change_patient_code(self):
+        selected_item = self.view.get_current_frame().tree.focus()
+        if selected_item:
+            code = self.view.get_current_frame().add_patient_entry.get()
+            username = self.view.get_current_frame().tree.item(selected_item, 'values')[0]
+            self.model.change_patient_code(username, code)
+            self.view.get_current_frame().clear_tree()
+            data = self.model.get_user_database()
+            self.view.get_current_frame().load_columns_to_tree(data[0])
+            self.view.get_current_frame().load_rows_to_tree(data[1])
+        else:
+            self.view.show_message()
 
     def patients_data_button(self):
         self.view.switch("PatientDataView")

@@ -33,5 +33,17 @@ class System:
         else:
             return []
 
+    def get_user_database(self):
+        data = [("Username", "Name", "Surname", "Patient_Csv_code"), self.user_database.get_users()]
+        return data
+
+    def change_patient_code(self, username, code):
+        code_in_string = str(code)
+        if code_in_string:
+            self.user_database.assign_csv_code(username, code_in_string)
+            return True
+        else:
+            return False
+
     def access_database(self):
         pass

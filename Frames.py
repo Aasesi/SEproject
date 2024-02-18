@@ -103,14 +103,59 @@ class DataAnalysisView(tk.Frame):
         self.name_label.grid(row=0, column=0, padx=10, pady=5)
         self.back_button = tk.Button(self, text="Back", command=self.controller.back_to_doctor_view)
         self.back_button.grid(row=6, column=0, columnspan=2, padx=10, pady=5)
+        self.name_label = tk.Label(self, text="Name:")
+        self.name_label.grid(row=0, column=0, padx=10, pady=5)
+
+        self.tree = ttk.Treeview(self)
+        self.tree.grid(row=0, column=0, sticky='nsew')
+        self.vsb = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscrollcommand=self.vsb.set)
+        self.vsb.grid(row=0, column=1, sticky='ns')
+
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        # Add or change patient csv_code input field label and button
+        self.add_patient_label = tk.Label(self, text="Add or change patient code:")
+        self.add_patient_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        self.add_patient_entry = tk.Entry(self)
+        self.add_patient_entry.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        self.add_patient_button = tk.Button(self, text="Change", command=self.controller.change_patient_code)
+        self.add_patient_button.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+
+        # Combobox
+        self.graphs = ttk.Combobox(self, values=["Data distribution", "Correlation Matrix"])
+        self.graphs.grid(row=4, column=0, padx=10, pady=5)
+        self.graphs.set("Data distribution")
+
+        # Canvas
+        self.canvas = tk.Canvas(self, width=400, height=300, bg="white")
+        self.canvas.grid(row=0, column=2, padx=10, pady=5)
+
+    def load_columns_to_tree(self, columns):
+        self.tree["columns"] = columns
+        self.tree.column('#0', width=0, stretch=False)
+        self.tree.heading('#0', text='', anchor="center")
+        for col in columns:
+            self.tree.column(col, anchor="center", width=50)
+            self.tree.heading(col, text=col)
+
+    def load_rows_to_tree(self, rows):
+        data = [list(tup) for tup in rows]
+        for row in data:
+            self.tree.insert("", "end", values=row)
+
+    def clear_tree(self):
+        self.tree.delete(*self.tree.get_children())
+
+    def make_graph(self):
+        pass
 
 
 class PatientDataManipulation(tk.Frame):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
-        self.name_label = tk.Label(self, text="Name:")
-        self.name_label.grid(row=0, column=0, padx=10, pady=5)
 
 
 class PatientDataView(tk.Frame):
@@ -210,7 +255,7 @@ class PatientDataView(tk.Frame):
 # 11 - Veggies : Indicates if the person consumes 1 or more vegetable(s) daily.
 # 12 - HvyAlcoholConsump : Indicates if the person has more than 14 drinks per week.
 # 13 - AnyHealthcare : Indicates if the person has any form of health insurance.
-# 14 - NoDocbcCost : Indicates if the person wanted to visit a doctor within the past 1 year but couldn’t, due to cost.
+# 14 - NoDocbcCost : Indicates if the person wanted to visit a doctor within the past 1 year but couldnï¿½t, due to cost.
 # 15 - GenHlth : Indicates the persons response to how well is their general health, ranging from 1 (excellent) to 5 (poor).
 # 16 - Menthlth : Indicates the number of days, within the past 30 days that the person had bad mental health.
 # 17 - PhysHlth : Indicates the number of days, within the past 30 days that the person had bad physical health.

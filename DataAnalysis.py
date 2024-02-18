@@ -11,7 +11,10 @@ from sklearn.metrics import accuracy_score, precision_score, f1_score, recall_sc
 
 
 class DataAnalysis:
-    def health_event_prediction(self):
+    def __init__(self):
+        self.logistic_regression = LogisticRegression()
+
+    def train_model_heart_disease(self):
         data = pd.read_csv("csvFiles/heart_disease_health_indicators_BRFSS2015.csv")
         data.drop_duplicates(inplace=True)
         y = data[['HeartDiseaseorAttack']]
@@ -23,18 +26,23 @@ class DataAnalysis:
         x_train = x_train.values
         y_train = y_train.values
         model = StandardScaler()
-        x_train = model.fit_transform(x_train)
-        model = LogisticRegression
+
+        new_data = model.fit_transform(x_test)
+        x_test = pd.DataFrame(new_data)
+
+        new_data = model.fit_transform(x_train)
+        x_train = pd.DataFrame(new_data)
+
         y_train = y_train.ravel()
-        model.fit(x_train, y_train)
+        self.logistic_regression.fit(x_train, y_train)
         y_test = y_test.ravel()
-        y_pred = model.predict(x_test)
-        cm = confusion_matrix(y_test, y_pred)
+        prediction = self.logistic_regression.predict(x_test)
+        cm = confusion_matrix(y_test, prediction)
         print(cm)
-        print('Accuracy Score', accuracy_score(y_test, y_pred) * 100, '%')
-        print('Precision Macro Score', precision_score(y_test, y_pred, average='macro') * 100, '%')
-        print('Recall_Score', recall_score(y_test, y_pred, average='macro') * 100, '%')
-        print('F_Score', f1_score(y_test, y_pred, average='macro') * 100, '%')
+        print('Accuracy Score', accuracy_score(y_test, prediction) * 100, '%')
+        print('Precision Macro Score', precision_score(y_test, prediction, average='macro') * 100, '%')
+        print('Recall_Score', recall_score(y_test, prediction, average='macro') * 100, '%')
+        print('F_Score', f1_score(y_test, prediction, average='macro') * 100, '%')
 
     def calculate_median(self, data):
         sorted_values = sorted(data)

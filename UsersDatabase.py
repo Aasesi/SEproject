@@ -22,7 +22,8 @@ class UserDatabaseSQL:
                 password TEXT,
                 usertype TEXT,
                 name TEXT,
-                surname TEXT
+                surname TEXT,
+                patient_csv_code INTEGER
             )
         ''')
 
@@ -87,3 +88,33 @@ class UserDatabaseSQL:
 
         result = self.cursor.fetchall()
         return result
+
+    def get_user_basic_data(self, name, surname):
+        self.connect()
+        self.cursor.execute('''
+                SELECT username, name, surname, patient_csv_code FROM logins
+                WHERE name = ? AND surname = ? AND usertype = "Patient"
+                ''', (name, surname))
+
+        result = self.cursor.fetchall()
+        return result
+
+    def get_users(self):
+        self.connect()
+        self.cursor.execute('''
+                        SELECT username, name, surname, patient_csv_code FROM logins
+                        WHERE usertype = "Patient"
+                        ''')
+
+        result = self.cursor.fetchall()
+        print(result)
+        return result
+
+    def assign_csv_code(self, username, code):
+        self.connect()
+        self.cursor.execute('''
+                UPDATE logins
+                SET patient_csv_code = ?
+                WHERE username = ?
+                ''', (code, username))
+        self.commit_and_close()
