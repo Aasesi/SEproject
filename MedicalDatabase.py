@@ -1,4 +1,3 @@
-import csv
 import pandas as pd
 
 
@@ -7,6 +6,8 @@ class MedicalDatabase:
         self.file_path = file_path
         self.column_names_list = []
         self.rows = {}
+        self.dataframe = None
+        self.load_data()
 
     def delete(self):
         # Just normal delete function
@@ -30,6 +31,7 @@ class MedicalDatabase:
             df = pd.read_csv(self.file_path)
             self.column_names_list = df.columns.tolist()
             self.rows = df.to_dict(orient="records")
+            self.dataframe = df
             return True
         except FileNotFoundError:
             return False
@@ -43,3 +45,9 @@ class MedicalDatabase:
 
     def get_rows(self):
         return self.rows
+
+    def get_rows_without_patient_code(self):
+        data = self.dataframe.drop(["Patient_code", "Sex", "HighBP", "HighChol", "CholCheck", "Stroke",
+                                    "DiffWalk", "Smoker", "PhysActivity", "Fruits", "Veggies", "HvyAlcoholConsump",
+                                    "AnyHealthcare", "NoDocbcCost"], axis=1)
+        return data

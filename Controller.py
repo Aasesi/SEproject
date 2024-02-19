@@ -38,6 +38,8 @@ class Controller:
         self.model.register(name, surname, user_type, user, password)
 
     def data_analysis_button(self):
+        data = self.model.get_part_of_csv()
+        self.view.give_temp_data(data)
         self.view.switch("DataAnalysisView")
         data = self.model.get_user_database()
         self.view.get_current_frame().load_columns_to_tree(data[0])
@@ -66,4 +68,6 @@ class Controller:
         self.view.get_current_frame().load_rows_to_tree(data[1])
         
     def back_to_doctor_view(self):
+        temp_data = [self.model.current_user.name, self.model.current_user.surname]
+        self.view.give_temp_data(temp_data)
         self.view.switch("DoctorViewMain")

@@ -28,7 +28,7 @@ class View:
             self.current_frame.pack_propagate(False)
             self.current_frame.place(relx=.5, rely=.3, anchor="center")
         if name == "DataAnalysisView":
-            self.current_frame = DataAnalysisView(self.controller)
+            self.current_frame = DataAnalysisView(self.controller, self.temp_data[0], self.temp_data[1])
             self.current_frame.pack_propagate(False)
             self.current_frame.place(relx=.5, rely=.3, anchor="center")
         if name == "PatientDataManipulation":

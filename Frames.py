@@ -5,6 +5,10 @@ import pandas as pd
 from asyncio import streams
 from msilib.schema import File
 from tkinter import messagebox, ttk, filedialog
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
 
 
 class LoginView(tk.Frame):
@@ -96,8 +100,10 @@ class PatientView(tk.Frame):
 
 
 class DataAnalysisView(tk.Frame):
-    def __init__(self, controller):
+    def __init__(self, controller, csv_data_part, csv_data_all):
         super().__init__()
+        self.data = csv_data_part
+        self.data2 = csv_data_all
         self.controller = controller
         self.name_label = tk.Label(self, text="Name:")
         self.name_label.grid(row=0, column=0, padx=10, pady=5)
@@ -123,14 +129,25 @@ class DataAnalysisView(tk.Frame):
         self.add_patient_button = tk.Button(self, text="Change", command=self.controller.change_patient_code)
         self.add_patient_button.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
-        # Combobox
-        self.graphs = ttk.Combobox(self, values=["Data distribution", "Correlation Matrix"])
-        self.graphs.grid(row=4, column=0, padx=10, pady=5)
-        self.graphs.set("Data distribution")
-
         # Canvas
-        self.canvas = tk.Canvas(self, width=400, height=300, bg="white")
-        self.canvas.grid(row=0, column=2, padx=10, pady=5)
+        self.canvas = None
+
+        # Small Frame
+        self.small_frame = tk.Frame(self)
+        self.small_frame.grid(row=0, column=3, padx=10, pady=5)
+
+        self.plot_label = tk.Label(self.small_frame, text="Data plots:")
+        self.name_label.grid(row=0, column=0, padx=10, pady=5)
+
+        self.selected = tk.IntVar(value=1)
+        self.boxplot_checkbox_entry = tk.Radiobutton(self.small_frame, text="Boxplot", variable=self.selected, value=1,
+                                                     command=self.make_graph)
+        self.matrix_checkbox_entry = tk.Radiobutton(self.small_frame, text="correlation matrix", variable=self.selected,
+                                                    value=2, command=self.make_graph)
+        self.boxplot_checkbox_entry.grid(row=1, column=0, padx=10, pady=5)
+        self.matrix_checkbox_entry.grid(row=1, column=1, padx=10, pady=5)
+
+        self.make_graph()
 
     def load_columns_to_tree(self, columns):
         self.tree["columns"] = columns
@@ -149,7 +166,27 @@ class DataAnalysisView(tk.Frame):
         self.tree.delete(*self.tree.get_children())
 
     def make_graph(self):
-        pass
+        if self.selected.get() == 1:
+            plt.clf()
+            df = pd.DataFrame(self.data)
+            plt.figure(figsize=(5, 3))
+            sns.boxplot(data=df)
+            plt.tight_layout()
+            some_l = list(np.arange(df.shape[1]))
+            plt.xticks(some_l, list(df.columns),
+                       rotation=90, fontsize=5)
+            self.canvas = FigureCanvasTkAgg(plt.gcf(), master=self)
+            self.canvas.get_tk_widget().grid(row=0, column=2, padx=10, pady=5)
+            self.canvas.draw()
+        else:
+            plt.clf()
+            df = pd.DataFrame(self.data2)
+            df2 = df.corr()
+            sns.heatmap(data=df2, annot=True, cmap="coolwarm")
+            plt.figure(figsize=(5, 3))
+            self.canvas = FigureCanvasTkAgg(plt.gcf(), master=self)
+            self.canvas.get_tk_widget().grid(row=0, column=2, padx=10, pady=5)
+            self.canvas.draw()
 
 
 class PatientDataManipulation(tk.Frame):

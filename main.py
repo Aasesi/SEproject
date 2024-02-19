@@ -8,4 +8,3 @@ if __name__ == '__main__':
     #a = DataAnalysis()
     #a.train_model_heart_disease()
     app = App()
-    app.mainloop()

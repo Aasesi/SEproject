@@ -47,3 +47,6 @@ class System:
 
     def access_database(self):
         pass
+
+    def get_part_of_csv(self):
+        return [self.patient_database.get_rows_without_patient_code(), self.patient_database.get_rows()]
