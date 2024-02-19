@@ -5,7 +5,7 @@ from User import User
 
 class System:
     def __init__(self):
-        self.patient_database = MedicalDatabase("csvFiles/patients_data")
+        self.patient_database = MedicalDatabase("csvFiles/patients_data.csv")
         self.current_user = None
         self.user_database = UserDatabaseSQL()
         self.user_database.create_table()
