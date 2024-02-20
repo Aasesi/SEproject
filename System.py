@@ -1,6 +1,8 @@
 from MedicalDatabase import MedicalDatabase
 from UsersDatabase import UserDatabaseSQL
 from User import User
+from DataAnalysis import DataAnalysis
+import pandas as pd
 
 
 class System:
@@ -9,6 +11,7 @@ class System:
         self.current_user = None
         self.user_database = UserDatabaseSQL()
         self.user_database.create_table()
+        self.data_analysis = DataAnalysis()
 
     def register(self, name, surname, role, username, password):
         self.user_database.add_user(name, surname, role, username, password)
@@ -50,3 +53,19 @@ class System:
 
     def get_part_of_csv(self):
         return [self.patient_database.get_rows_without_patient_code(), self.patient_database.get_rows()]
+
+    def calculate_data_for(self, name):
+        data = self.patient_database.get_specific_column_data(name)
+        data_list = [self.data_analysis.calculate_median(data), self.data_analysis.calculate_average(data),
+                     self.data_analysis.calculate_variance(data), self.data_analysis.calculate_mode(data),
+                     self.data_analysis.standard_deviation(data)]
+        return data_list
+
+    def prediction_making(self, row_code):
+        data = self.patient_database.get_rows()
+        for
+        df = pd.DataFrame(data)
+        specific_row_data = df[df["Patient_code"] == row_code]
+        self.data_analysis.train_model_heart_disease()
+        prediction = self.data_analysis.predict(specific_row_data)
+        print(prediction)

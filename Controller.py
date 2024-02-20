@@ -71,3 +71,16 @@ class Controller:
         temp_data = [self.model.current_user.name, self.model.current_user.surname]
         self.view.give_temp_data(temp_data)
         self.view.switch("DoctorViewMain")
+
+    def calculate_stat(self):
+        selected = self.view.get_current_frame().combo.get()
+        data = self.model.calculate_data_for(selected)
+        self.view.get_current_frame().stats_text.config(text=f"Median = {data[0]}\nAverage = {data[1]}\nVariance = "
+                                                             f"{data[2]}\n Mode = {data[3]}\n Standard deviation"
+                                                             f" = {data[4]}")
+
+    def make_prediction(self):
+        selected_item = self.view.get_current_frame().tree.focus()
+        if selected_item:
+            code = self.view.get_current_frame().tree.item(selected_item, 'values')[3]
+            self.model.prediction_making(code)

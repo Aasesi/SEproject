@@ -59,3 +59,8 @@ class DataAnalysis:
 
     def calculate_mode(self, data):
         return statistics.mode(data)
+
+    def predict(self, row):
+        self.train_model_heart_disease()
+        to_return = self.logistic_regression.predict(row)
+        return to_return

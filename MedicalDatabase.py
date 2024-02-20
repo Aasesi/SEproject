@@ -51,3 +51,7 @@ class MedicalDatabase:
                                     "DiffWalk", "Smoker", "PhysActivity", "Fruits", "Veggies", "HvyAlcoholConsump",
                                     "AnyHealthcare", "NoDocbcCost"], axis=1)
         return data
+
+    def get_specific_column_data(self, name):
+        column_name_data = [item[name] for item in self.rows]
+        return column_name_data

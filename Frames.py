@@ -149,6 +149,26 @@ class DataAnalysisView(tk.Frame):
 
         self.make_graph()
 
+
+        # Statistics
+        self.stats_text = tk.Label(self, text="Please calculate some data")
+        self.stats_text.grid(row=4, column=0, padx=10, pady=5)
+        options = ["BMI", "Age", "MentHlth", "PhysHlth"]
+        self.calculate_stats_for_combobox = tk.Button(self, text="Calculate", command=self.controller.calculate_stat)
+        self.calculate_stats_for_combobox.grid(row=4, column=1, padx=10, pady=5)
+        self.combo = ttk.Combobox(self, values=options)
+        self.combo.set("BMI")
+        self.combo.grid(row=4, column=2, padx=10, pady=5)
+
+        # Making prediction
+        self.prediction_button = tk.Button(self, text="Predict", command=self.controller.make_prediction)
+        self.prediction_button.grid(row=5, column=0, padx=10, pady=5)
+        self.predict_label = tk.Label(self, text="Pick patient and make prediction:")
+        self.predict_label.grid(row=5, column=1, padx=10, pady=5)
+        self.prediction_label = tk.Label(self, text="")
+        self.prediction_label.grid(row=6, column=1, padx=10, pady=5)
+
+
     def load_columns_to_tree(self, columns):
         self.tree["columns"] = columns
         self.tree.column('#0', width=0, stretch=False)
@@ -182,7 +202,7 @@ class DataAnalysisView(tk.Frame):
             plt.clf()
             df = pd.DataFrame(self.data2)
             df2 = df.corr()
-            sns.heatmap(data=df2, annot=True, cmap="coolwarm")
+
             plt.figure(figsize=(5, 3))
             self.canvas = FigureCanvasTkAgg(plt.gcf(), master=self)
             self.canvas.get_tk_widget().grid(row=0, column=2, padx=10, pady=5)
