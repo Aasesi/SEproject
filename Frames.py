@@ -108,7 +108,7 @@ class DataAnalysisView(tk.Frame):
         self.name_label = tk.Label(self, text="Name:")
         self.name_label.grid(row=0, column=0, padx=10, pady=5)
         self.back_button = tk.Button(self, text="Back", command=self.controller.back_to_doctor_view)
-        self.back_button.grid(row=6, column=0, columnspan=2, padx=10, pady=5)
+        self.back_button.grid(row=9, column=1, columnspan=2, padx=10, pady=5)
         self.name_label = tk.Label(self, text="Name:")
         self.name_label.grid(row=0, column=0, padx=10, pady=5)
 
@@ -142,7 +142,7 @@ class DataAnalysisView(tk.Frame):
         self.selected = tk.IntVar(value=1)
         self.boxplot_checkbox_entry = tk.Radiobutton(self.small_frame, text="Boxplot", variable=self.selected, value=1,
                                                      command=self.make_graph)
-        self.matrix_checkbox_entry = tk.Radiobutton(self.small_frame, text="correlation matrix", variable=self.selected,
+        self.matrix_checkbox_entry = tk.Radiobutton(self.small_frame, text="Age count", variable=self.selected,
                                                     value=2, command=self.make_graph)
         self.boxplot_checkbox_entry.grid(row=1, column=0, padx=10, pady=5)
         self.matrix_checkbox_entry.grid(row=1, column=1, padx=10, pady=5)
@@ -152,22 +152,21 @@ class DataAnalysisView(tk.Frame):
 
         # Statistics
         self.stats_text = tk.Label(self, text="Please calculate some data")
-        self.stats_text.grid(row=4, column=0, padx=10, pady=5)
+        self.stats_text.grid(row=5, column=2, padx=10, pady=5)
         options = ["BMI", "Age", "MentHlth", "PhysHlth"]
         self.calculate_stats_for_combobox = tk.Button(self, text="Calculate", command=self.controller.calculate_stat)
-        self.calculate_stats_for_combobox.grid(row=4, column=1, padx=10, pady=5)
+        self.calculate_stats_for_combobox.grid(row=5, column=0, padx=10, pady=5)
         self.combo = ttk.Combobox(self, values=options)
         self.combo.set("BMI")
-        self.combo.grid(row=4, column=2, padx=10, pady=5)
+        self.combo.grid(row=4, column=0, padx=10, pady=5)
 
         # Making prediction
         self.prediction_button = tk.Button(self, text="Predict", command=self.controller.make_prediction)
-        self.prediction_button.grid(row=5, column=0, padx=10, pady=5)
+        self.prediction_button.grid(row=6, column=0, padx=10, pady=5)
         self.predict_label = tk.Label(self, text="Pick patient and make prediction:")
-        self.predict_label.grid(row=5, column=1, padx=10, pady=5)
+        self.predict_label.grid(row=7, column=0, padx=10, pady=5)
         self.prediction_label = tk.Label(self, text="")
-        self.prediction_label.grid(row=6, column=1, padx=10, pady=5)
-
+        self.prediction_label.grid(row=7, column=1, padx=10, pady=5)
 
     def load_columns_to_tree(self, columns):
         self.tree["columns"] = columns
@@ -189,7 +188,7 @@ class DataAnalysisView(tk.Frame):
         if self.selected.get() == 1:
             plt.clf()
             df = pd.DataFrame(self.data)
-            plt.figure(figsize=(5, 3))
+            plt.figure(figsize=(4, 2))
             sns.boxplot(data=df)
             plt.tight_layout()
             some_l = list(np.arange(df.shape[1]))
@@ -201,9 +200,10 @@ class DataAnalysisView(tk.Frame):
         else:
             plt.clf()
             df = pd.DataFrame(self.data2)
-            df2 = df.corr()
-
-            plt.figure(figsize=(5, 3))
+            plt.figure(figsize=(4, 2))
+            plt.xlabel("Ages", fontsize=7)
+            plt.ylabel("Count")
+            sns.histplot(df)
             self.canvas = FigureCanvasTkAgg(plt.gcf(), master=self)
             self.canvas.get_tk_widget().grid(row=0, column=2, padx=10, pady=5)
             self.canvas.draw()

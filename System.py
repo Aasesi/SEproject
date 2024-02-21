@@ -52,7 +52,8 @@ class System:
         pass
 
     def get_part_of_csv(self):
-        return [self.patient_database.get_rows_without_patient_code(), self.patient_database.get_rows()]
+        return [self.patient_database.get_rows_without_patient_code(),
+                self.patient_database.get_specific_column_data("Age")]
 
     def calculate_data_for(self, name):
         data = self.patient_database.get_specific_column_data(name)
@@ -61,11 +62,9 @@ class System:
                      self.data_analysis.standard_deviation(data)]
         return data_list
 
-    def prediction_making(self, row_code):
-        data = self.patient_database.get_rows()
-        for
-        df = pd.DataFrame(data)
-        specific_row_data = df[df["Patient_code"] == row_code]
+    def train_logistic_regression(self):
         self.data_analysis.train_model_heart_disease()
-        prediction = self.data_analysis.predict(specific_row_data)
-        print(prediction)
+
+    def prediction_making(self, row_code):
+        pass
+

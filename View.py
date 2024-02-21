@@ -50,7 +50,7 @@ class View:
         return self.current_frame
 
     def show_message_box(self):
-        messagebox.showinfo("some info", "hello")
+        messagebox.showinfo("Info", "Not working")
 
     def show_message(self):
         messagebox.showinfo("Incorrect", "Patient not selected in data!!!")

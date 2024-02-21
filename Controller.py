@@ -82,5 +82,6 @@ class Controller:
     def make_prediction(self):
         selected_item = self.view.get_current_frame().tree.focus()
         if selected_item:
-            code = self.view.get_current_frame().tree.item(selected_item, 'values')[3]
-            self.model.prediction_making(code)
+            self.view.show_message_box()
+        else:
+            self.view.show_message()

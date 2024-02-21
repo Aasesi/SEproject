@@ -44,6 +44,7 @@ class DataAnalysis:
         print('Recall_Score', recall_score(y_test, prediction, average='macro') * 100, '%')
         print('F_Score', f1_score(y_test, prediction, average='macro') * 100, '%')
 
+
     def calculate_median(self, data):
         sorted_values = sorted(data)
         return statistics.median(sorted_values)
@@ -61,6 +62,4 @@ class DataAnalysis:
         return statistics.mode(data)
 
     def predict(self, row):
-        self.train_model_heart_disease()
-        to_return = self.logistic_regression.predict(row)
-        return to_return
+        pass
