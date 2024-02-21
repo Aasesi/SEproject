@@ -1,5 +1,6 @@
+import numpy as np
 import pandas as pd
-
+import csv
 
 class MedicalDatabase:
     def __init__(self, file_path: str):
@@ -13,10 +14,22 @@ class MedicalDatabase:
         # Just normal delete function
         pass
 
-    def insert(self):
-        # Insert patient data. Two cases(optional btw we can just add entire row) one for inserting entire row and one
-        # for updating/insert (maybe adding missing data to some patient)
-        pass
+    def insert_null(self, patient_code):
+        new_data = [patient_code, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                    None, None, None, None, None, None, None]
+        with open(self.file_path, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(new_data)
+
+        # df = pd.read_csv(self.file_path)
+        # new_data = {"Patient_code": patient_code, "HighBP": np.NAN, "HighChol": np.NAN, "CholCheck": np.NAN,
+        #             "BMI": np.NAN, "Smoker": np.NAN, "Stroke": np.NAN, "Diabetes": np.NAN, "PhysActivity": np.NAN,
+        #             "Fruits": np.NAN, "Veggies": np.NAN, "HvyAlcoholConsump": np.NAN, "AnyHealthcare": np.NAN,
+        #             "NoDocbcCost": np.NAN, "GenHlth": np.NAN, "MentHlth": np.NAN, "PhysHlth": np.NAN,
+        #             "DiffWalk": np.NAN,
+        #             "Sex": np.NAN, "Age": np.NAN, "Education": np.NAN, "Income": np.NAN}
+        # df.append(new_data, ignore_index=True)
+        # df.to_csv(self.file_path, index=False)
 
     def interpret_data(self):
         # I do not remember why we have this

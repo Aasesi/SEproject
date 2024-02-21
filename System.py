@@ -68,3 +68,10 @@ class System:
     def prediction_making(self, row_code):
         pass
 
+    def insert_data_to_csv(self, value):
+        data = self.patient_database.get_rows()
+        df = pd.DataFrame(data)
+        if value in df['Patient_code'].values:
+            pass
+        else:
+            self.patient_database.insert_null(value)

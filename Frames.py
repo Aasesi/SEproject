@@ -339,7 +339,7 @@ class PatientDataView(tk.Frame):
             if str(first_column_value) != search_text:
                 self.tree.delete(item)
             
-    def refresh_table(self, event=NULL):
+    def refresh_table(self, event=None):
         self.restore_tree()
 
         if self.high_bp_var.get() == 1:

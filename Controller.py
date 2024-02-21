@@ -54,6 +54,7 @@ class Controller:
             code = self.view.get_current_frame().add_patient_entry.get()
             username = self.view.get_current_frame().tree.item(selected_item, 'values')[0]
             self.model.change_patient_code(username, code)
+            self.model.insert_data_to_csv(code)
             self.view.get_current_frame().clear_tree()
             data = self.model.get_user_database()
             self.view.get_current_frame().load_columns_to_tree(data[0])
