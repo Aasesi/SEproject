@@ -66,6 +66,7 @@ class Controller:
         data = self.model.get_database_data()
         self.view.get_current_frame().load_columns_to_tree(data[0])
         self.view.get_current_frame().load_rows_to_tree(data[1])
+        self.view.get_current_frame().save_data(self.view.get_current_frame().tree_data)
         
     def back_to_doctor_view(self):
         temp_data = [self.model.current_user.name, self.model.current_user.surname]

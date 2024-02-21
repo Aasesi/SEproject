@@ -221,18 +221,13 @@ class PatientDataView(tk.Frame):
         self.controller = controller
         self.tree = ttk.Treeview(self)
         self.tree.grid(row=0, column=0, sticky='nsew')
-        
-        self.removed_items = []
 
+        self.tree_data = []
+            
         # Vertical scrollbar
         self.vsb = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=self.vsb.set)
         self.vsb.grid(row=0, column=1, sticky='ns')
-
-        # Horizontal scrollbar (To be removed (probably))
-        hsb = ttk.Scrollbar(self, orient="horizontal", command=self.tree.xview)
-        self.tree.configure(xscrollcommand=hsb.set)
-        hsb.grid(row=1, column=0, sticky='ew')
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -247,18 +242,75 @@ class PatientDataView(tk.Frame):
         self.search_button = tk.Button(self, text="Search", command=self.search_data)
         self.search_button.grid(row=4, column=0, padx=10, pady=5, sticky="w")
         
-        # Filter by high blood pressure
+        self.checkbox_frame = tk.Frame(self)
+        self.checkbox_frame.grid(row=5, column=0, padx=10, sticky="w")
+
+        # 1 - Filter by high blood pressure
         self.high_bp_var = tk.IntVar()
-        self.high_bp_checkbox = tk.Checkbutton(self, text="High BP", variable=self.high_bp_var, onvalue=1, offvalue=0, command=self.filter_high_bp)
-        self.high_bp_checkbox.grid(row=5, column=0, padx=10, pady=5, sticky="w")
+        self.high_bp_checkbox = tk.Checkbutton(self.checkbox_frame, text="High Blood Pressure", variable=self.high_bp_var, onvalue=1, offvalue=0, command=self.refresh_table)
+        self.high_bp_checkbox.grid(row=0, column=0, pady=3, sticky="w")
+        
+        # 2 - Filter by high cholesterol
+        self.high_chol_var = tk.IntVar()
+        self.high_chol_checkbox = tk.Checkbutton(self.checkbox_frame, text="High Cholesterol", variable=self.high_chol_var, onvalue=1, offvalue=0, command=self.refresh_table)
+        self.high_chol_checkbox.grid(row=1, column=0, pady=3, sticky="w")
+        
+        # 3 - Filter by smoker
+        self.smoker_var = tk.IntVar()
+        self.smoker_checkbox = tk.Checkbutton(self.checkbox_frame, text="Smokers", variable=self.smoker_var, onvalue=1, offvalue=0, command=self.refresh_table)
+        self.smoker_checkbox.grid(row=2, column=0, pady=3, sticky="w")
+        
+        # 4 - Filter by stroke
+        self.stroke_var = tk.IntVar()
+        self.stroke_checkbox = tk.Checkbutton(self.checkbox_frame, text="Had a stroke", variable=self.stroke_var, onvalue=1, offvalue=0, command=self.refresh_table)
+        self.stroke_checkbox.grid(row=3, column=0, pady=3, sticky="w")
+        
+        # 5 - Filter by physical activity
+        self.phys_activity_var = tk.IntVar()
+        self.phys_activity_checkbox = tk.Checkbutton(self.checkbox_frame, text="Physically active", variable=self.phys_activity_var, onvalue=1, offvalue=0, command=self.refresh_table)
+        self.phys_activity_checkbox.grid(row=4, column=0, pady=3, sticky="w")
+        
+        # 6 - Filter by fruits consumption
+        self.fruits_var = tk.IntVar()
+        self.fruits_checkbox = tk.Checkbutton(self.checkbox_frame, text="Consumes fruits", variable=self.fruits_var, onvalue=1, offvalue=0, command=self.refresh_table)
+        self.fruits_checkbox.grid(row=0, column=1, sticky="w")
+        
+        # 7 - Filter by veggies consumption
+        self.veggies_var = tk.IntVar()
+        self.veggies_checkbox = tk.Checkbutton(self.checkbox_frame, text="Consumes vegetables", variable=self.veggies_var, onvalue=1, offvalue=0, command=self.refresh_table)
+        self.veggies_checkbox.grid(row=1, column=1, sticky="w")
+        
+        # 8 - Filter by heavy alcohol consumption
+        self.hvy_alcohol_consump_var = tk.IntVar()
+        self.hvy_alcohol_consump_checkbox = tk.Checkbutton(self.checkbox_frame, text="Heavy alcohol consumption", variable=self.hvy_alcohol_consump_var, onvalue=1, offvalue=0, command=self.refresh_table)
+        self.hvy_alcohol_consump_checkbox.grid(row=2, column=1, sticky="w")
+        
+        # 9 - Filter by healthcare insurance
+        self.any_healthcare_var = tk.IntVar()
+        self.any_healthcare_checkbox = tk.Checkbutton(self.checkbox_frame, text="Has insurance", variable=self.any_healthcare_var, onvalue=1, offvalue=0, command=self.refresh_table)
+        self.any_healthcare_checkbox.grid(row=3, column=1, sticky="w")
+        
+        # 10 - Filter by difficulty in walking or climbing stairs
+        self.diff_walk_var = tk.IntVar()
+        self.diff_walk_checkbox = tk.Checkbutton(self.checkbox_frame, text="Has difficulty walking", variable=self.diff_walk_var, onvalue=1, offvalue=0, command=self.refresh_table)
+        self.diff_walk_checkbox.grid(row=4, column=1, sticky="w")
+        
+        # Filter by sex
+        self.sex_label = tk.Label(self.checkbox_frame, text="Sex:")
+        self.sex_label.grid(row=0, column=2, sticky="w")
+
+        self.sex_var = tk.StringVar(value="All")
+        self.sex_combobox = ttk.Combobox(self.checkbox_frame, textvariable=self.sex_var, values=["All", "Male", "Female"])
+        self.sex_combobox.grid(row=0, column=3, sticky="e")
+        self.sex_combobox.bind("<<ComboboxSelected>>", self.refresh_table)
         
         # Clear filter button
         self.clear_filter_button = tk.Button(self, text="Clear filters", command=self.controller.patients_data_button)
-        self.clear_filter_button.grid(row=4, column=0, padx=10, pady=5, sticky="e")
+        self.clear_filter_button.grid(row=3, column=0, padx=10, sticky="e")
         
         # Back button
         self.back_button = tk.Button(self, text="Back", command=self.controller.back_to_doctor_view)
-        self.back_button.grid(row=6, column=0, padx=10, pady=5, sticky="se")
+        self.back_button.grid(row=4, column=0, padx=10, sticky="se")
 
     def load_columns_to_tree(self, columns):
         self.tree["columns"] = columns
@@ -274,6 +326,11 @@ class PatientDataView(tk.Frame):
             values = [item[column] for column in columns]
             self.tree.insert("", "end", values=values)
     
+    def save_data(self, tree_data):
+        for item in self.tree.get_children():
+            values = self.tree.item(item)['values']
+            self.tree_data.append(values)
+
     def search_data(self):
         search_text = self.search_field.get().strip()
     
@@ -281,43 +338,112 @@ class PatientDataView(tk.Frame):
             first_column_value = self.tree.item(item)['values'][0]
             if str(first_column_value) != search_text:
                 self.tree.delete(item)
-                
-    def filter_high_bp(self):
+            
+    def refresh_table(self, event=NULL):
+        self.restore_tree()
+
         if self.high_bp_var.get() == 1:
-            self.removed_items.clear()
             for item in self.tree.get_children():
-                high_bp = self.tree.item(item)['values'][2]
+                high_bp = self.tree.item(item)['values'][1]
                 if str(high_bp) == '0.0':
                     values = self.tree.item(item)['values']
-                    self.removed_items.append((item, values))
                     self.tree.delete(item)
-        else:
-            for item, values in self.removed_items:
-                self.tree.insert("", "end", values=values)
-            self.removed_items.clear()
+        if self.high_chol_var.get() == 1:
+            for item in self.tree.get_children():
+                high_chol = self.tree.item(item)['values'][2]
+                if str(high_chol) == '0.0':
+                    values = self.tree.item(item)['values']
+                    self.tree.delete(item)
+        if self.smoker_var.get() == 1:
+            for item in self.tree.get_children():
+                smoker = self.tree.item(item)['values'][5]
+                if str(smoker) == '0.0':
+                    values = self.tree.item(item)['values']
+                    self.tree.delete(item)
+        if self.stroke_var.get() == 1:
+            for item in self.tree.get_children():
+                stroke = self.tree.item(item)['values'][6]
+                if str(stroke) == '0.0':
+                    values = self.tree.item(item)['values']
+                    self.tree.delete(item)
+        if self.phys_activity_var.get() == 1:
+            for item in self.tree.get_children():
+                phys_activity = self.tree.item(item)['values'][8]
+                if str(phys_activity) == '0.0':
+                    values = self.tree.item(item)['values']
+                    self.tree.delete(item)
+        if self.fruits_var.get() == 1:
+            for item in self.tree.get_children():
+                fruits = self.tree.item(item)['values'][9]
+                if str(fruits) == '0.0':
+                    values = self.tree.item(item)['values']
+                    self.tree.delete(item)
+        if self.veggies_var.get() == 1:
+            for item in self.tree.get_children():
+                veggies = self.tree.item(item)['values'][10]
+                if str(veggies) == '0.0':
+                    values = self.tree.item(item)['values']
+                    self.tree.delete(item)
+        if self.hvy_alcohol_consump_var.get() == 1:
+            for item in self.tree.get_children():
+                hvy_alcohol_consump = self.tree.item(item)['values'][11]
+                if str(hvy_alcohol_consump) == '0.0':
+                    values = self.tree.item(item)['values']
+                    self.tree.delete(item)
+        if self.any_healthcare_var.get() == 1:
+            for item in self.tree.get_children():
+                any_healthcare = self.tree.item(item)['values'][12]
+                if str(any_healthcare) == '0.0':
+                    values = self.tree.item(item)['values']
+                    self.tree.delete(item)
+        if self.diff_walk_var.get() == 1:
+            for item in self.tree.get_children():
+                diff_walk = self.tree.item(item)['values'][17]
+                if str(diff_walk) == '0.0':
+                    values = self.tree.item(item)['values']
+                    self.tree.delete(item)
+        if self.sex_var.get() != "All":
+            if self.sex_var.get() == "Male":
+                for item in self.tree.get_children():
+                    sex = self.tree.item(item)['values'][18]
+                    if str(sex) == '0.0':
+                        values = self.tree.item(item)['values']
+                        self.tree.delete(item)
+            elif self.sex_var.get() == "Female":
+                for item in self.tree.get_children():
+                    sex = self.tree.item(item)['values'][18]
+                    if str(sex) == '1.0':
+                        values = self.tree.item(item)['values']
+                        self.tree.delete(item)
+                    
+    def restore_tree(self):
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        for item in self.tree_data:
+            self.tree.insert("", "end", values=item)
+            
 
 # REFERENCES
 
 # 0 - PatientCode : A unique code assigned to each patient.
-# 1 - HeartDiseaseorAttack : Indicates if the person has a history of heart disease or heart attack.
-# 2 - HighBP : Indicates if the person has been told by a health professional that they have High Blood Pressure.
-# 3 - HighChol : Indicates if the person has been told by a health professional that they have High Blood Cholesterol.
-# 4 - CholCheck : Cholesterol Check, if the person has their cholesterol levels checked within the last 5 years.
-# 5 - BMI : Body Mass Index, calculated by dividing the persons weight (in kilogram) by the square of their height (in meters).
-# 6 - Smoker : Indicates if the person has smoked at least 100 cigarettes.
-# 7 - Stroke : Indicates if the person has a history of stroke.
-# 8 - Diabetes : Indicates if the person has a history of diabetes, or currently in pre-diabetes, or suffers from either type of diabetes.
-# 9 - PhysActivity : Indicates if the person has some form of physical activity in their day-to-day routine.
-# 10 - Fruits : Indicates if the person consumes 1 or more fruit(s) daily.
-# 11 - Veggies : Indicates if the person consumes 1 or more vegetable(s) daily.
-# 12 - HvyAlcoholConsump : Indicates if the person has more than 14 drinks per week.
-# 13 - AnyHealthcare : Indicates if the person has any form of health insurance.
-# 14 - NoDocbcCost : Indicates if the person wanted to visit a doctor within the past 1 year but couldn�t, due to cost.
-# 15 - GenHlth : Indicates the persons response to how well is their general health, ranging from 1 (excellent) to 5 (poor).
-# 16 - Menthlth : Indicates the number of days, within the past 30 days that the person had bad mental health.
-# 17 - PhysHlth : Indicates the number of days, within the past 30 days that the person had bad physical health.
-# 18 - DiffWalk : Indicates if the person has difficulty while walking or climbing stairs.
-# 19 - Sex : Indicates the gender of the person, where 0 is female and 1 is male.
-# 20 - Age : Indicates the age class of the person, where 1 is 18 years to 24 years up till 13 which is 80 years or older, each interval between has a 5-year increment.
-# 21 - Education : Indicates the highest year of school completed, with 0 being never attended or kindergarten only and 6 being, having attended 4 years of college or more.
-# 22 - Income : Indicates the total household income, ranging from 1 (at least $10,000) to 6 ($75,000+)
+# 1 - HighBP : Indicates if the person has been told by a health professional that they have High Blood Pressure.
+# 2 - HighChol : Indicates if the person has been told by a health professional that they have High Blood Cholesterol.
+# 3 - CholCheck : Cholesterol Check, if the person has their cholesterol levels checked within the last 5 years.
+# 4 - BMI : Body Mass Index, calculated by dividing the persons weight (in kilogram) by the square of their height (in meters).
+# 5 - Smoker : Indicates if the person has smoked at least 100 cigarettes.
+# 6 - Stroke : Indicates if the person has a history of stroke.
+# 7 - Diabetes : Indicates if the person has a history of diabetes, or currently in pre-diabetes, or suffers from either type of diabetes.
+# 8 - PhysActivity : Indicates if the person has some form of physical activity in their day-to-day routine.
+# 9 - Fruits : Indicates if the person consumes 1 or more fruit(s) daily.
+# 10 - Veggies : Indicates if the person consumes 1 or more vegetable(s) daily.
+# 11 - HvyAlcoholConsump : Indicates if the person has more than 14 drinks per week.
+# 12 - AnyHealthcare : Indicates if the person has any form of health insurance.
+# 13 - NoDocbcCost : Indicates if the person wanted to visit a doctor within the past 1 year but couldn�t, due to cost.
+# 14 - GenHlth : Indicates the persons response to how well is their general health, ranging from 1 (excellent) to 5 (poor).
+# 15 - Menthlth : Indicates the number of days, within the past 30 days that the person had bad mental health.
+# 16 - PhysHlth : Indicates the number of days, within the past 30 days that the person had bad physical health.
+# 17 - DiffWalk : Indicates if the person has difficulty while walking or climbing stairs.
+# 18 - Sex : Indicates the gender of the person, where 0 is female and 1 is male.
+# 19 - Age : Indicates the age class of the person, where 1 is 18 years to 24 years up till 13 which is 80 years or older, each interval between has a 5-year increment.
+# 20 - Education : Indicates the highest year of school completed, with 0 being never attended or kindergarten only and 6 being, having attended 4 years of college or more.
+# 21 - Income : Indicates the total household income, ranging from 1 (at least $10,000) to 6 ($75,000+)
