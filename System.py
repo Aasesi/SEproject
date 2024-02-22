@@ -55,6 +55,9 @@ class System:
         return [self.patient_database.get_rows_without_patient_code(),
                 self.patient_database.get_specific_column_data("Age")]
 
+    def get_data(self):
+        return self.patient_database.get_rows()
+
     def calculate_data_for(self, name):
         data = self.patient_database.get_specific_column_data(name)
         data_list = [self.data_analysis.calculate_median(data), self.data_analysis.calculate_average(data),

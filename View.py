@@ -7,6 +7,7 @@ class View:
         self.current_frame = None
         self.controller = None
         self.temp_data = []
+        self.patient_data = []
 
     def switch(self, name):
         if self.current_frame is not None:
@@ -24,7 +25,7 @@ class View:
             self.current_frame.pack_propagate(False)
             self.current_frame.place(relx=.5, rely=.3, anchor="center")
         if name == "PatientView":
-            self.current_frame = PatientView(self.controller)
+            self.current_frame = PatientView(self.controller, self.patient_data)
             self.current_frame.pack_propagate(False)
             self.current_frame.place(relx=.5, rely=.3, anchor="center")
         if name == "DataAnalysisView":
@@ -42,6 +43,9 @@ class View:
 
     def give_temp_data(self, temp_list):
         self.temp_data = temp_list
+        
+    def pass_patient_data(self, data):
+        self.patient_data = data
 
     def set_controller(self, controller):
         self.controller = controller
@@ -50,7 +54,7 @@ class View:
         return self.current_frame
 
     def show_message_box(self):
-        messagebox.showinfo("Info", "Not working")
+        messagebox.showinfo("Info", "Incorrect username or password")
 
     def show_message(self):
         messagebox.showinfo("Incorrect", "Patient not selected in data!!!")

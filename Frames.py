@@ -1,6 +1,7 @@
 import tkinter as tk
 import csv
 import os
+from xml.dom.minidom import Attr
 import pandas as pd
 from asyncio import streams
 from msilib.schema import File
@@ -92,12 +93,171 @@ class DoctorMenuView(tk.Frame):
 
 
 class PatientView(tk.Frame):
-    def __init__(self, controller):
+    def __init__(self, controller, patient_data):
         super().__init__()
         self.controller = controller
-        self.name_label = tk.Label(self, text="Name:")
-        self.name_label.grid(row=0, column=0, padx=10, pady=5)
+        record = patient_data
+        self.tuple_list = [(key, value) for key, value in record.items()]
+        
+        self.tree = ttk.Treeview(self, height=22)
+        self.tree.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        self.tree["columns"] = ("Value")
+        self.tree.heading("#0", text="Attribute")
+        self.tree.heading("Value", text="Value")
+        self.tree.column("#0", width=300)
+        self.tree.column("Value", width=100)
+        
+        attributes = [
+            "Patient code",
+            "High blood pressure",
+            "High cholesterol",
+            "Had cholesterol checked in the last 5 years",
+            "BMI",
+            "Smoker",
+            "Had a stroke",
+            "Diabetes type",
+            "Has physical activity in day-to-day routine",
+            "Consumes fruits daily",
+            "Consumes vegetables daily",
+            "Has more than 14 drinks per week",
+            "Has any health insurance",
+            "No doctor visits due to cost within past year",
+            "General health",
+            "Number of bad mental health days in last 30 days",
+            "Number of bad physical health days in last 30 days",
+            "Has difficulty walking or climbing stairs",
+            "Sex",
+            "Age",
+            "Education level",
+            "Income"
+        ]
 
+        for idx, attribute in enumerate(attributes):
+            value: str = self.interpret_data(self.tuple_list[idx])
+            self.tree.insert("", "end", text=attribute, values=(value,))
+            
+
+
+        self.logout_button = tk.Button(self, text="Logout", command=self.controller.start)
+        self.logout_button.grid(row=1, column=0, sticky="ew")
+
+
+    def interpret_data(self, tpl):
+        if tpl[0] == "Patient_code":
+            return "Unknown" if str(tpl[1]) == "nan" else int(tpl[1])
+        elif tpl[0] == "HighBP":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "HighChol":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "CholCheck":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "BMI":
+            return "Unknown" if str(tpl[1]) == "nan" else tpl[1]
+        elif tpl[0] == "Smoker":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "Stroke":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "Diabetes":
+            return "Unknown" if str(tpl[1]) == "nan" else int(tpl[1]) if tpl[1] != 0.0 else "None"
+        elif tpl[0] == "PhysActivity":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "Fruits":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "Veggies":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "HvyAlcoholConsump":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "AnyHealthcare":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "NoDocbcCost":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "GenHlth":
+            if tpl[1] == 1.0:
+                return "Excellent"
+            elif tpl[1] == 2.0:
+                return "Very good"
+            elif tpl[1] == 3.0:
+                return "Good"
+            elif tpl[1] == 4.0:
+                return "Fine"
+            elif tpl[1] == 5.0:
+                return "Poor"
+            else:
+                return "Unknown"
+        elif tpl[0] == "MentHlth":
+            return "Unknown" if str(tpl[1]) == "nan" else int(tpl[1])
+        elif tpl[0] == "PhysHlth":
+            return "Unknown" if str(tpl[1]) == "nan" else int(tpl[1])
+        elif tpl[0] == "DiffWalk":
+            return "Yes" if tpl[1] == 1.0 else "No" if tpl[1] == 0.0 else "Unknown"
+        elif tpl[0] == "Sex":
+            return "Female" if tpl[1] == 0.0 else "Male" if tpl[1] == 1.0 else "Unknown"
+        elif tpl[0] == "Age":
+            if tpl[1] == 1.0:
+                return "18-24"
+            elif tpl[1] == 2.0:
+                return "25-30"
+            elif tpl[1] == 3.0:
+                return "31-35"
+            elif tpl[1] == 4.0:
+                return "36-40"
+            elif tpl[1] == 5.0:
+                return "41-45"
+            elif tpl[1] == 6.0:
+                return "46-50"
+            elif tpl[1] == 7.0:
+                return "51-55"
+            elif tpl[1] == 8.0:
+                return "56-60"
+            elif tpl[1] == 9.0:
+                return "61-65"
+            elif tpl[1] == 10.0:
+                return "66-70"
+            elif tpl[1] == 11.0:
+                return "71-75"
+            elif tpl[1] == 12.0:
+                return "76-80"
+            elif tpl[1] == 13.0:
+                return "80+"
+            else:
+                return "Unknown"         
+        elif tpl[0] == "Education":
+            if tpl[1] == 0.0:
+                return "None/Kindergarten"
+            elif tpl[1] == 1.0:
+                return "Elementary"
+            elif tpl[1] == 2.0:
+                return "High School"
+            elif tpl[1] == 3.0:
+                return "1 year of college"
+            elif tpl[1] == 4.0:
+                return "2 years of college"
+            elif tpl[1] == 5.0:
+                return "3 years of college"
+            elif tpl[1] == 6.0:
+                return "4 years of college"
+            else:
+                return "Unknown"
+        elif tpl[0] == "Income":
+            if tpl[1] == 1.0:
+                return "$10,000+"
+            elif tpl[1] == 2.0:
+                return "$20,000+"
+            elif tpl[1] == 3.0:
+                return "$30,000+"
+            elif tpl[1] == 4.0:
+                return "$40,000+"
+            elif tpl[1] == 5.0:
+                return "$50,000+"
+            elif tpl[1] == 6.0:
+                return "$60,000+"
+            elif tpl[1] == 7.0:
+                return "$70,000+"
+            elif tpl[1] == 8.0:
+                return "$75,000+"
+            else:
+                return "Unknown"
+        
 
 class DataAnalysisView(tk.Frame):
     def __init__(self, controller, csv_data_part, csv_data_all):

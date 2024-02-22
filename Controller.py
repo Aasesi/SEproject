@@ -13,16 +13,20 @@ class Controller:
     def login(self):
         user = self.view.get_current_frame().username_entry.get()
         password = self.view.get_current_frame().password_entry.get()
-        if self.model.login(user, password):
-            if self.model.current_user.userType == "Doctor":
+        if user.isdigit():
+            data = self.model.get_data()
+            if self.find_patient_record(data, user):
+                self.view.pass_patient_data(self.find_patient_record(data, user))
+                self.view.switch("PatientView")
+            else:
+                self.view.show_message()
+        else:
+            if self.model.login(user, password):
                 temp_data = [self.model.current_user.name, self.model.current_user.surname]
                 self.view.give_temp_data(temp_data)
                 self.view.switch("DoctorViewMain")
             else:
-                self.view.switch("PatientView")
-
-        else:
-            self.view.show_message_box()
+                self.view.show_message_box()
 
     def go_to_sign_up(self):
         self.view.switch("Register")
@@ -69,6 +73,12 @@ class Controller:
         self.view.get_current_frame().load_rows_to_tree(data[1])
         self.view.get_current_frame().save_data(self.view.get_current_frame().tree_data)
         
+    def find_patient_record(self, patient_data, patient_code):
+        for record in patient_data:
+            if str(record['Patient_code']) == patient_code:
+                return record
+        return None
+
     def back_to_doctor_view(self):
         temp_data = [self.model.current_user.name, self.model.current_user.surname]
         self.view.give_temp_data(temp_data)
